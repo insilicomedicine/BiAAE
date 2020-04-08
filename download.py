@@ -6,7 +6,7 @@ import argparse
 import sys
 import logging
 import os
-from torch.utils.model_zoo import _download_url_to_file
+from torch.hub import _download_url_to_file
 
 
 __VIEW1 = 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz'
@@ -41,7 +41,7 @@ def download_data(output='data/noisy_mnist.npz'):
         output: path to the output .npz file
     """
     with tempfile.NamedTemporaryFile() as view1, \
-          tempfile.NamedTemporaryFile() as view2:
+            tempfile.NamedTemporaryFile() as view2:
         logger.info("[Step 1/3] Downloading images x (rotated)")
         _download_url_to_file(__VIEW1, view1.name, None, True)
         logger.info("[Step 2/3] Downloading images y (rotated and noisy)")
