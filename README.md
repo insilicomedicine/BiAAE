@@ -16,6 +16,7 @@ In this repository, we provide an implementation of the proposed Bidirectional A
 1. Install basic dependencies: `pip install -r requirements.txt`.
 2. To download the Noisy MNIST dataset, please run `python download.py` from the root of the repository.
 3. To download pretraining molecular dataset, please run `cd data & wget https://media.githubusercontent.com/media/molecularsets/moses/master/data/train.csv`.
+4. To download preprocessed data from LINCS L1000 level 3 dataset [1], please, use [link](https://drive.google.com/drive/folders/1rMQmnAVMPPQxQTw0pjVvrGE-Toxys-w7?usp=sharing). Copy downloaded `lincs` folder to `data` folder.
 
 
 ## Training the model
@@ -37,3 +38,8 @@ To see training dynamic and metrics, please, run `tensorboard --logdir=logs`.
   publisher={Frontiers}
 }
 ```
+
+
+-----------
+
+[1] ```Subramanian A, et al. A Next Generation Connectivity Map: L1000 Platform And The First 1,000,000 Profiles. Cell. 2017/12/1. 171(6):1437–1452.```
