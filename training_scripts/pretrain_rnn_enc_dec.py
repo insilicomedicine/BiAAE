@@ -19,9 +19,10 @@ lg = RDLogger.logger()
 lg.setLevel(RDLogger.CRITICAL)
 
 class RNN_VAE(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, train_data):
         super(RNN_VAE, self).__init__()
         self.z_dim = 44
+        self.train_data = train_data
 
         self.enc = RNNEncoder(out_dim=2 * self.z_dim)
         self.dec = RNNDecoder(in_dim=self.z_dim)
@@ -99,12 +100,12 @@ class RNN_VAE(pl.LightningModule):
 
     @pl.data_loader
     def train_dataloader(self):
-        return DataLoader(MolecularDataset('../data/train.txt', train=True),
+        return DataLoader(MolecularDataset(self.train_data, train=True),
                           batch_size=512, shuffle=True, num_workers=10)
    
     @pl.data_loader
     def val_dataloader(self):
-        return DataLoader(MolecularDataset('../data/train.txt', train=False),
+        return DataLoader(MolecularDataset(self.train_data, train=False),
                           batch_size=512, shuffle=True, num_workers=10)
 
 if __name__ == '__main__':
@@ -115,10 +116,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=
                                      'Script to pretrain RNN encoder and decoder')
     parser.add_argument('--gpu', type=int, default=-1)
+    parser.add_argument('--train_data', type=str, default='../data/train.csv')
 
     args = parser.parse_args()
 
-    model = RNN_VAE()
+    model = RNN_VAE(train_data=args.train_data)
 
     logger = TestTubeLogger(save_dir='../logs', name='rnn_vae')
 
