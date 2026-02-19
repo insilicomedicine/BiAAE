@@ -2,5 +2,5 @@ pytorch-lightning==0.5.3
 torch==1.4.0
 torchvision==0.5.0
 pandas==0.24.2
-numpy==1.16.4
+numpy==1.22.0
 scikit-learn==0.20.3
