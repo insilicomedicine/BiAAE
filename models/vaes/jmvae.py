@@ -41,11 +41,11 @@ class JMVAE(pl.LightningModule):
             self.z_dim = 10
 
             rnn_1 = RNNEncoder(out_dim=88)
-            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             self.enc_x = FinetunedEncoder(rnn_1, out_dim=2 * self.z_dim)
 
             rnn_2 = RNNEncoder(out_dim=88)
-            rnn_2.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_2.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             an_enc_x = FinetunedEncoder(rnn_2, out_dim=2 * self.z_dim)
             
             self.enc_xy = JointEncoder(
@@ -63,7 +63,7 @@ class JMVAE(pl.LightningModule):
             self.beta = 1
 
             rnn_3 = RNNDecoder(in_dim=44)
-            rnn_3.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cuda:1'))
+            rnn_3.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cpu'))
             self.dec_x = FinetunedDecoder(rnn_3, in_dim=self.z_dim)
             self.dec_y = ExprDiffDecoder(in_dim=self.z_dim)
             
@@ -71,11 +71,11 @@ class JMVAE(pl.LightningModule):
             self.z_dim = 10
 
             rnn_1 = RNNEncoder(out_dim=88)
-            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             self.enc_y = FinetunedEncoder(rnn_1, out_dim=2 * self.z_dim)
 
             rnn_2 = RNNEncoder(out_dim=88)
-            rnn_2.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_2.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             an_enc_x = FinetunedEncoder(rnn_2, out_dim=2 * self.z_dim)
             
             self.enc_xy = JointEncoder(
@@ -93,7 +93,7 @@ class JMVAE(pl.LightningModule):
             self.beta = 1
 
             rnn_3 = RNNDecoder(in_dim=44)
-            rnn_3.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cuda:1'))
+            rnn_3.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cpu'))
             self.dec_y = FinetunedDecoder(rnn_3, in_dim=self.z_dim)
             self.dec_x = ExprDiffDecoder(in_dim=self.z_dim)
 

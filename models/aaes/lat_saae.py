@@ -48,13 +48,13 @@ class Lat_SAAE(pl.LightningModule):
             self.gen_steps = 3
 
             rnn_1 = RNNEncoder(out_dim=88)
-            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             self.enc_x = FinetunedEncoder(rnn_1, out_dim=self.z_dim // 2)
 
             self.enc_y = ExprDiffEncoder(out_dim=self.z_dim // 2)
 
             rnn_2 = RNNDecoder(in_dim=44)
-            rnn_2.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cuda:1'))
+            rnn_2.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cpu'))
             self.dec_x = FinetunedDecoder(rnn_2, in_dim=self.z_dim)
 
             self.dec_y = ExprDiffDecoder(in_dim=self.z_dim // 2)
@@ -73,13 +73,13 @@ class Lat_SAAE(pl.LightningModule):
             self.gen_steps = 3
 
             rnn_1 = RNNEncoder(out_dim=88)
-            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn_1.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             self.enc_y = FinetunedEncoder(rnn_1, out_dim=self.z_dim // 2)
 
             self.enc_x = ExprDiffEncoder(out_dim=self.z_dim // 2)
 
             rnn_2 = RNNDecoder(in_dim=44)
-            rnn_2.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cuda:1'))
+            rnn_2.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cpu'))
             self.dec_y = FinetunedDecoder(rnn_2, in_dim=self.z_dim // 2)
 
             self.dec_x = ExprDiffDecoder(in_dim=self.z_dim)
@@ -189,26 +189,45 @@ class Lat_SAAE(pl.LightningModule):
         self.dec_y.zero_grad()
         self.discr.zero_grad()
         
-    def optimizer_step(self, current_epoch, batch_nb, optimizer, optimizer_i, optimizer_closure):
-        discr_step = (batch_nb % (self.discr_steps + self.gen_steps)) < \
-                     self.discr_steps
+    def optimizer_step(self, *args, **kwargs):
+        """Compatibility wrapper for old/new PyTorch Lightning optimizer_step signatures."""
+        batch_nb = kwargs.get('batch_idx', kwargs.get('batch_nb'))
+        optimizer = kwargs.get('optimizer')
+        optimizer_i = kwargs.get('optimizer_idx', kwargs.get('optimizer_i'))
+        optimizer_closure = kwargs.get('optimizer_closure')
 
-        gen_step = (not discr_step)
+        if batch_nb is None and len(args) > 1:
+            batch_nb = args[1]
+        if optimizer is None and len(args) > 2:
+            optimizer = args[2]
+        if optimizer_i is None and len(args) > 3:
+            optimizer_i = args[3]
+        if optimizer_closure is None and len(args) > 4:
+            optimizer_closure = args[4]
+
+        discr_step = (batch_nb % (self.discr_steps + self.gen_steps)) < self.discr_steps
+        gen_step = not discr_step
+
+        def _step(opt, closure):
+            if callable(closure):
+                opt.step(closure=closure)
+            else:
+                opt.step()
 
         if optimizer_i == 0:
             if gen_step:
-                optimizer.step()
+                _step(optimizer, optimizer_closure)
             optimizer.zero_grad()
             self.zero_grad()
 
         if optimizer_i == 1:
             if discr_step:
-                optimizer.step()
+                _step(optimizer, optimizer_closure)
             optimizer.zero_grad()
             self.zero_grad()
 
         if optimizer_i > 1:
-            optimizer.step()
+            _step(optimizer, optimizer_closure)
             optimizer.zero_grad()
             self.zero_grad()
 

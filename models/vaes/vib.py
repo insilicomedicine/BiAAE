@@ -34,7 +34,7 @@ class VIB(pl.LightningModule):
             self.enc_y = ExprDiffEncoder(out_dim=2 * self.z_dim)
 
             rnn = RNNDecoder(in_dim=44)
-            rnn.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cuda:1'))
+            rnn.load_state_dict(torch.load('../saved_models/rnn_dec.ckpt', map_location='cpu'))
             self.dec_x = FinetunedDecoder(rnn, in_dim=self.z_dim) 
         elif self.dataset == 'lincs_rnn_reverse':
             self.z_dim = 10
@@ -43,7 +43,7 @@ class VIB(pl.LightningModule):
             self.beta = 1
             
             rnn = RNNEncoder(out_dim=88)
-            rnn.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cuda:1'))
+            rnn.load_state_dict(torch.load('../saved_models/rnn_enc.ckpt', map_location='cpu'))
             self.enc_y = FinetunedEncoder(rnn, out_dim=2 * self.z_dim)
 
             self.dec_x = ExprDiffDecoder(in_dim=self.z_dim)
