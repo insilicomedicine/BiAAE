@@ -161,7 +161,7 @@ class CVAE(pl.LightningModule):
         xy_y_kl = self.kl_div(p_z_xy_means, p_z_xy_logvar,
                               p_z_y_means, p_z_y_logvar)
 
-        # compute reconstrunction loss
+        # compute reconstruction loss
         x_by_z_y_logprob = self.dec_x_cond.get_log_prob(x=x,
                                                         z=z_xy_sample,
                                                         cond=y)

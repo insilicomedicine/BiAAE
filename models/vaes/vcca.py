@@ -166,7 +166,7 @@ class VCCA(pl.LightningModule):
         z_y_kl = self.kl_div(p_z_y_means, p_z_y_logvar)
         s_y_kl = self.kl_div(p_s_y_means, p_s_y_logvar)
 
-        # compute reconstrunction loss
+        # compute reconstruction loss
         x_z_logprob = self.dec_x.get_log_prob(x,
                                               torch.cat((z_x_sample, s_y_sample), -1))
         y_z_logprob = self.dec_y.get_log_prob(y,

@@ -189,7 +189,7 @@ class JMVAE(pl.LightningModule):
         xy_y_kl = self.kl_div(p_z_xy_means, p_z_xy_logvar,
                               p_z_y_means, p_z_y_logvar)
 
-        # compute reconstrunction loss
+        # compute reconstruction loss
         x_z_logprob = self.dec_x.get_log_prob(x, z_x_sample)
         y_z_logprob = self.dec_y.get_log_prob(y, z_y_sample)
 

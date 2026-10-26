@@ -116,7 +116,7 @@ class VIB(pl.LightningModule):
         # compute kl divergence
         kl = self.kl_div(p_z_y_means, p_z_y_logvar)
 
-        # compute reconstrunction loss
+        # compute reconstruction loss
         x_by_z_logprob = self.dec_x.get_log_prob(x=x, z=z_y_sample)
 
         loss = (-self.loss_rec_lambda_x * x_by_z_logprob + self.beta * kl)
